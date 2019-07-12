@@ -1,19 +1,52 @@
-import React from 'react';
-import './App.css';
+import React, { Component } from "react";
+import styled from "styled-components";
+import Char from "./components/Char";
+import "./App.css";
 
-const App = () => {
-  // Try to think through what state you'll need for this app before starting. Then build out
-  // the state properties here.
+const Header = styled.div`
+  color: #443e3e;
+  text-shadow: 1px 1px 5px #fff;
+  text-align: center;
+  font-size: 35px;
+`
 
-  // Fetch characters from the star wars api in an effect hook. Remember, anytime you have a 
-  // side effect in a component, you want to think about which state and/or props it should
-  // sync up with, if any.
+class App extends Component {
+  constructor() {
+    super();
+    this.state = {
+      starwarsChars: []
+    };
+  }
 
-  return (
-    <div className="App">
-      <h1 className="Header">React Wars</h1>
-    </div>
-  );
+  componentDidMount() {
+    this.getCharacters("https://swapi.co/api/people/");
+  }
+
+  getCharacters = URL => {
+    fetch(URL)
+      .then(res => {
+        return res.json();
+      })
+      .then(data => {
+        this.setState({ starwarsChars: data.results });
+      })
+      .catch(err => {
+        throw new Error(err);
+      });
+  };
+
+  render() {
+    return (
+      <div className="App">
+        <Header>React Wars </Header>
+        <div className="char-list">
+          {this.state.starwarsChars.map(charFromMap => (
+            <Char charOnProps={charFromMap} />
+          ))}
+        </div>
+      </div>
+    );
+  }
 }
 
 export default App;
